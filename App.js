@@ -1,4 +1,4 @@
-import React, { useState, useEffect, createContext, useContext } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, Text, View, FlatList, TouchableOpacity, Image, ScrollView, Alert, Vibration } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -8,23 +8,16 @@ import { Pedometer } from 'expo-sensors';
 import * as Location from 'expo-location';
 import { Camera } from 'expo-camera';
 
-// --- CONTEXTO DE TEMA (Modo Claro / Escuro) ---
-const ThemeContext = createContext({
-  isDarkMode: true,
-  toggleTheme: () => {},
-});
-
-const getThemeStyles = (isDarkMode) => {
-  return {
-    background: isDarkMode ? '#121214' : '#F5F7FA',
-    card: isDarkMode ? '#1D1D2E' : '#FFFFFF',
-    text: isDarkMode ? '#FFFFFF' : '#1F2937',
-    subText: isDarkMode ? '#98A2B3' : '#6B7280',
-    border: isDarkMode ? '#2D2D44' : '#E5E7EB',
-    purple: '#7F56D9',
-    timerBg: isDarkMode ? '#121214' : '#E5E7EB',
-    progressBg: isDarkMode ? '#2D2D44' : '#D1D5DB',
-  };
+// --- CORES DO TEMA ESCURO ---
+const colors = {
+  background: '#121214',
+  card: '#1D1D2E',
+  text: '#FFFFFF',
+  subText: '#98A2B3',
+  border: '#2D2D44',
+  purple: '#7F56D9',
+  timerBg: '#121214',
+  progressBg: '#2D2D44',
 };
 
 // --- DADOS MOCADOS ---
@@ -44,62 +37,47 @@ const EXERCICIOS = [
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-  const [isDarkMode, setIsDarkMode] = useState(true);
-  const toggleTheme = () => setIsDarkMode(!isDarkMode);
-
   return (
-    <ThemeContext.Provider value={{ isDarkMode, toggleTheme }}>
-      <NavigationContainer>
-        <Stack.Navigator 
-          initialRouteName="Home"
-          screenOptions={{
-            headerStyle: { 
-              backgroundColor: isDarkMode ? '#1A1A2E' : '#FFFFFF', 
-              borderBottomWidth: 1, 
-              borderBottomColor: isDarkMode ? '#2D2D44' : '#E5E7EB' 
-            },
-            headerTintColor: isDarkMode ? '#FFF' : '#1F2937',
-            headerTitleStyle: { fontWeight: '800', fontSize: 18, letterSpacing: 0.5 },
-            contentStyle: { backgroundColor: isDarkMode ? '#121214' : '#F5F7FA' },
-            // Removido headerLeft daqui para permitir o botão voltar automático nativo nas outras telas!
-          }}
-        >
-          <Stack.Screen 
-            name="Home" 
-            component={HomeScreen} 
-            options={({ navigation }) => ({ 
-              title: 'FitLife',
-              // Adicionado botão de tema APENAS na tela principal
-              headerLeft: () => (
-                <TouchableOpacity onPress={toggleTheme} style={{ marginLeft: 15 }}>
-                  <Text style={{ fontSize: 20 }}>{isDarkMode ? '☀️' : '🌙'}</Text>
-                </TouchableOpacity>
-              ),
-              headerRight: () => (
-                <TouchableOpacity 
-                  onPress={() => navigation.navigate('SobreNos')} 
-                  style={{ marginRight: 15 }}
-                >
-                  <Text style={{ color: isDarkMode ? '#FFF' : '#7F56D9', fontWeight: 'bold', fontSize: 14 }}>Sobre Nós</Text>
-                </TouchableOpacity>
-              )
-            })} 
-          />
-          <Stack.Screen name="ListarExercicios" component={ListarExerciciosScreen} options={{ title: 'Exercícios' }} />
-          <Stack.Screen name="Detalhes" component={DetalhesScreen} options={{ title: 'Instruções do Treino' }} />
-          <Stack.Screen name="Perfil" component={PerfilScreen} options={{ title: 'Meu Perfil & Sensores' }} />
-          <Stack.Screen name="SobreNos" component={SobreNosScreen} options={{ title: 'Sobre o projeto' }} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </ThemeContext.Provider>
+    <NavigationContainer>
+      <Stack.Navigator 
+        initialRouteName="Home"
+        screenOptions={{
+          headerStyle: { 
+            backgroundColor: '#1A1A2E', 
+            borderBottomWidth: 1, 
+            borderBottomColor: '#2D2D44',
+          },
+          headerTintColor: '#FFF',
+          headerTitleStyle: { fontWeight: '800', fontSize: 18, letterSpacing: 0.5 },
+          contentStyle: { backgroundColor: '#121214' },
+        }}
+      >
+        <Stack.Screen 
+          name="Home" 
+          component={HomeScreen} 
+          options={({ navigation }) => ({ 
+            title: 'FitLife',
+            headerRight: () => (
+              <TouchableOpacity 
+                onPress={() => navigation.navigate('SobreNos')} 
+                style={{ marginRight: 15 }}
+              >
+                <Text style={{ color: '#FFF', fontWeight: 'bold', fontSize: 14 }}>Sobre Nós</Text>
+              </TouchableOpacity>
+            )
+          })} 
+        />
+        <Stack.Screen name="ListarExercicios" component={ListarExerciciosScreen} options={{ title: 'Exercícios' }} />
+        <Stack.Screen name="Detalhes" component={DetalhesScreen} options={{ title: 'Instruções do Treino' }} />
+        <Stack.Screen name="Perfil" component={PerfilScreen} options={{ title: 'Meu Perfil & Sensores' }} />
+        <Stack.Screen name="SobreNos" component={SobreNosScreen} options={{ title: 'Sobre o projeto' }} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
 // --- 1. TELA INICIAL ---
 function HomeScreen({ navigation }) {
-  const { isDarkMode } = useContext(ThemeContext);
-  const colors = getThemeStyles(isDarkMode);
-
   const categorias = [
     { nome: 'Todos', emoji: '⚡' },
     { nome: 'Cardio', emoji: '🫀' },
@@ -112,13 +90,11 @@ function HomeScreen({ navigation }) {
     <ScrollView style={[styles.containerScroll, { backgroundColor: colors.background }]}>
       <View style={styles.headerHome}>
         <Text style={[styles.boasVindas, { color: colors.text }]}>Bem vindo 👋</Text>
-
       </View>
       
       <View style={styles.conteudoHome}>
         <Text style={[styles.tituloSecao, { color: colors.text }]}>Selecione uma Categoria</Text>
         
-        {/* Botões Roxos e Longos de Categoria */}
         <View style={styles.listaCategoriasLonga}>
           {categorias.map((cat, index) => (
             <TouchableOpacity 
@@ -149,8 +125,6 @@ function HomeScreen({ navigation }) {
 // --- 2. TELA DE LISTAGEM ---
 function ListarExerciciosScreen({ route, navigation }) {
   const { categoriaSelecionada } = route.params;
-  const { isDarkMode } = useContext(ThemeContext);
-  const colors = getThemeStyles(isDarkMode);
 
   const dadosFiltrados = categoriaSelecionada === 'Todos' 
     ? EXERCICIOS 
@@ -203,49 +177,47 @@ function ListarExerciciosScreen({ route, navigation }) {
   );
 }
 
-// --- 3. TELA DE DETALHES ---
+// --- 3. TELA DE DETALHES (CRONÔMETRO AUTOMÁTICO) ---
 function DetalhesScreen({ route, navigation }) {
   const { exercicio } = route.params;
-  const { isDarkMode } = useContext(ThemeContext);
-  const colors = getThemeStyles(isDarkMode);
 
   const obterTotalSeries = (duracao) => {
     const match = duracao.match(/(\d+)\s*(série|de)/i);
-    if (match) {
-      return parseInt(match[1], 10);
-    }
-    if (duracao.includes('min') || duracao.includes('seg')) {
-      return 1;
-    }
+    if (match) return parseInt(match[1], 10);
+    if (duracao.includes('min') || duracao.includes('seg')) return 1;
     return 3;
   };
 
   const obterTempoExercicio = (duracao) => {
     const matchSeg = duracao.match(/(\d+)\s*(seg|s)/i);
-    if (matchSeg) {
-      return parseInt(matchSeg[1], 10);
-    }
+    if (matchSeg) return parseInt(matchSeg[1], 10);
     const matchMin = duracao.match(/(\d+)\s*(min|m)/i);
-    if (matchMin && !duracao.includes('série') && !duracao.includes('de')) {
+    if (matchMin && !duracao.includes('série') && !duracao.includes('de'))
       return parseInt(matchMin[1], 10) * 60;
-    }
-    return 30; // Padrão: 30 segundos
+    return 30;
   };
 
   const totalSeries = obterTotalSeries(exercicio.duracao);
   const totalSegundosSerie = obterTempoExercicio(exercicio.duracao);
 
+  const seriesRef = useRef(0);
+
   const [seriesConcluidas, setSeriesConcluidas] = useState(0);
   const [tempoRestante, setTempoRestante] = useState(totalSegundosSerie);
   const [cronometroAtivo, setCronometroAtivo] = useState(false);
+  const [mensagemFinal, setMensagemFinal] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && 'Notification' in window) {
-      if (window.Notification.permission !== 'granted' && window.Notification.permission !== 'denied') {
-        window.Notification.requestPermission();
-      }
-    }
-  }, []);
+    seriesRef.current = seriesConcluidas;
+  }, [seriesConcluidas]);
+
+  useEffect(() => {
+    setTempoRestante(totalSegundosSerie);
+    setSeriesConcluidas(0);
+    seriesRef.current = 0;
+    setCronometroAtivo(false);
+    setMensagemFinal(false);
+  }, [exercicio]);
 
   // Efeito do Cronômetro
   useEffect(() => {
@@ -255,49 +227,23 @@ function DetalhesScreen({ route, navigation }) {
         setTempoRestante(prev => prev - 1);
       }, 1000);
     } else if (tempoRestante === 0 && cronometroAtivo) {
-      setCronometroAtivo(false);
-      finalizarSerieComTimer();
+      const proximaSerie = seriesRef.current + 1;
+      setSeriesConcluidas(proximaSerie);
+      seriesRef.current = proximaSerie;
+
+      if (proximaSerie >= totalSeries) {
+        // === ÚLTIMA SÉRIE ===
+        try { Vibration.vibrate([0, 400, 200, 400]); } catch (e) {}
+        setCronometroAtivo(false);
+        setMensagemFinal(true);
+      } else {
+        // === SÉRIE INTERMEDIÁRIA - avança automaticamente ===
+        try { Vibration.vibrate(200); } catch (e) {}
+        setTempoRestante(totalSegundosSerie);
+      }
     }
     return () => clearInterval(intervalo);
   }, [cronometroAtivo, tempoRestante]);
-
-  useEffect(() => {
-    setTempoRestante(totalSegundosSerie);
-    setSeriesConcluidas(0);
-    setCronometroAtivo(false);
-  }, [exercicio]);
-
-  const finalizarSerieComTimer = async () => {
-    const proximaSerie = seriesConcluidas + 1;
-    setSeriesConcluidas(proximaSerie);
-
-    try {
-      Vibration.vibrate([0, 300, 100, 300]);
-    } catch (e) {
-      console.log('Vibração não suportada:', e);
-    }
-
-    const tituloNotificacao = `Série ${proximaSerie} Concluída! 🏋️‍♂️`;
-    const mensagemNotificacao = proximaSerie < totalSeries 
-      ? `Você concluiu a série ${proximaSerie} de ${totalSeries}. Clique em "Iniciar" para começar a próxima!`
-      : `Parabéns! Você concluiu todas as ${totalSeries} séries de "${exercicio.nome}"!`;
-
-    if (typeof window !== 'undefined' && 'Notification' in window && window.Notification.permission === 'granted') {
-      try {
-        new window.Notification(tituloNotificacao, {
-          body: mensagemNotificacao,
-          icon: exercicio.imagem,
-        });
-      } catch (err) {
-        console.log('Erro ao disparar notificação:', err);
-        Alert.alert(tituloNotificacao, mensagemNotificacao);
-      }
-    } else {
-      Alert.alert(tituloNotificacao, mensagemNotificacao);
-    }
-
-    setTempoRestante(totalSegundosSerie);
-  };
 
   const alternarCronometro = () => {
     if (seriesConcluidas >= totalSeries) {
@@ -310,12 +256,10 @@ function DetalhesScreen({ route, navigation }) {
   const zerarCronometro = () => {
     setCronometroAtivo(false);
     setTempoRestante(totalSegundosSerie);
-    if (tempoRestante === totalSegundosSerie) {
-      setSeriesConcluidas(0);
-    }
-    try {
-      Vibration.vibrate(100);
-    } catch (e) {}
+    setSeriesConcluidas(0);
+    seriesRef.current = 0;
+    setMensagemFinal(false);
+    try { Vibration.vibrate(100); } catch (e) {}
   };
 
   const formatarTempo = (segundos) => {
@@ -341,12 +285,12 @@ function DetalhesScreen({ route, navigation }) {
           <Text style={[styles.duracaoDetalheBadge, { color: colors.subText }]}>⏱️ {exercicio.duracao}</Text>
         </View>
         
-        {/* Painel do Cronômetro e Barra */}
+        {/* Painel do Cronômetro */}
         <View style={[styles.cardContador, { backgroundColor: colors.card, borderColor: colors.border }]}>
           <View style={styles.statusContadorContainer}>
             <Text style={[styles.tituloContador, { color: colors.subText }]}>Cronômetro de Séries</Text>
             
-            {seriesConcluidas === totalSeries ? (
+            {seriesConcluidas >= totalSeries ? (
               <View style={styles.badgeConcluido}>
                 <Text style={styles.textoBadgeConcluido}>Concluído! 🎉</Text>
               </View>
@@ -357,19 +301,17 @@ function DetalhesScreen({ route, navigation }) {
             )}
           </View>
 
-          {/* Display Grande do Cronômetro com Barra de Progresso */}
-          <View style={[styles.timerDisplayContainer, { backgroundColor: colors.background, borderColor: colors.border }]}>
+          <View style={[styles.timerDisplayContainer, { backgroundColor: colors.timerBg, borderColor: colors.border }]}>
             <Text style={[styles.timerDisplayText, { color: colors.text }]}>
               {formatarTempo(tempoRestante)}
             </Text>
             
-            {/* Barra de Progresso */}
             <View style={[styles.barraProgressoFundo, { backgroundColor: colors.progressBg }]}>
               <View style={[styles.barraProgressoPreenchida, { width: `${porcentagemProgresso}%`, backgroundColor: colors.purple }]} />
             </View>
 
             <Text style={[styles.timerDisplaySubtitle, { color: colors.subText }]}>
-              {cronometroAtivo ? '💪 Executando...' : '⏸️ Pausado'}
+              {mensagemFinal ? '✅ Finalizado' : cronometroAtivo ? '💪 Executando...' : '⏸️ Pausado'}
             </Text>
           </View>
 
@@ -386,24 +328,35 @@ function DetalhesScreen({ route, navigation }) {
             ))}
           </View>
 
-          {/* Botões de Ação Roxos e Longos Empilhados */}
+          {/* Mensagem de conclusão */}
+          {mensagemFinal && (
+            <View style={styles.mensagemFinalContainer}>
+              <Text style={styles.mensagemFinalTexto}>
+                🎉 Parabéns! Todas as {totalSeries} séries de "{exercicio.nome}" foram concluídas!
+              </Text>
+            </View>
+          )}
+
+          {/* Botões */}
           <View style={styles.linhaBotoesContadorVertical}>
             <TouchableOpacity 
               style={[
                 styles.botaoLargo, 
                 cronometroAtivo ? styles.botaoPausar : { backgroundColor: colors.purple },
-                seriesConcluidas === totalSeries ? styles.botaoDesabilitado : {}
+                seriesConcluidas >= totalSeries ? styles.botaoDesabilitado : {}
               ]} 
               onPress={alternarCronometro}
-              disabled={seriesConcluidas === totalSeries}
+              disabled={seriesConcluidas >= totalSeries}
               activeOpacity={0.8}
             >
               <Text style={styles.textoBotaoLargo}>
-                {seriesConcluidas === totalSeries 
+                {seriesConcluidas >= totalSeries 
                   ? 'Treino Concluído' 
                   : cronometroAtivo 
                     ? 'Pausar' 
-                    : 'Iniciar Série ' + (seriesConcluidas + 1)}
+                    : seriesConcluidas === 0 
+                      ? 'Iniciar Treino' 
+                      : 'Retomar Série ' + (seriesConcluidas + 1)}
               </Text>
             </TouchableOpacity>
 
@@ -436,9 +389,6 @@ function DetalhesScreen({ route, navigation }) {
 
 // --- 4. TELA DE PERFIL / SENSORES ---
 function PerfilScreen() {
-  const { isDarkMode } = useContext(ThemeContext);
-  const colors = getThemeStyles(isDarkMode);
-
   const [passosAtuais, setPassosAtuais] = useState(0);
   const [pedometroDisponivel, setPedometroDisponivel] = useState('verificando');
   const [localizacao, setLocalizacao] = useState(null);
@@ -536,9 +486,6 @@ function PerfilScreen() {
 
 // --- 5. TELA SOBRE NÓS ---
 function SobreNosScreen({ navigation }) {
-  const { isDarkMode } = useContext(ThemeContext);
-  const colors = getThemeStyles(isDarkMode);
-
   return (
     <View style={[styles.container, { backgroundColor: colors.background, padding: 20 }]}>
       <Text style={[styles.tituloSecao, { color: colors.text }]}>Sobre Nós</Text>
@@ -546,7 +493,7 @@ function SobreNosScreen({ navigation }) {
       <View style={[styles.cardSensor, { backgroundColor: colors.card, borderColor: colors.border, marginHorizontal: 0, padding: 18 }]}>
         <Text style={[styles.tituloCardSensor, { color: colors.text, fontSize: 18 }]}>FitLife</Text>
         <Text style={[styles.legendaSensor, { color: colors.subText, fontSize: 14, lineHeight: 22 }]}>
-          Texto sobre o grupo aqui ó
+          (((Adicionar texto sobre o app e o grupo aqui)))
         </Text>
         <Text style={[styles.legendaSensor, { color: colors.subText, marginTop: 20, fontWeight: '700' }]}>
           Versão: 1.0.0 (Snack Web build)
@@ -564,7 +511,7 @@ function SobreNosScreen({ navigation }) {
   );
 }
 
-// --- ESTILIZAÇÃO COMPLETA (Visual Dark/Light Mode Premium) ---
+// --- ESTILIZAÇÃO COMPLETA ---
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -573,8 +520,6 @@ const styles = StyleSheet.create({
   containerScroll: {
     flex: 1,
   },
-  
-  // Home styles
   headerHome: {
     paddingHorizontal: 4,
     paddingTop: 16,
@@ -583,10 +528,6 @@ const styles = StyleSheet.create({
   boasVindas: {
     fontSize: 26,
     fontWeight: '800',
-  },
-  subBoasVindas: {
-    fontSize: 14,
-    marginTop: 4,
   },
   tituloSecao: {
     fontSize: 18,
@@ -619,8 +560,6 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     fontSize: 16,
   },
-  
-  // List style
   cardExercicio: {
     flexDirection: 'row',
     borderRadius: 12,
@@ -668,8 +607,6 @@ const styles = StyleSheet.create({
   textoSetaCard: {
     fontSize: 16,
   },
-  
-  // Detail style
   containerImagemDetalhe: {
     position: 'relative',
     width: '100%',
@@ -726,8 +663,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 22,
   },
-  
-  // Custom buttons
   botaoVoltarCustom: {
     borderWidth: 1,
     padding: 16,
@@ -740,8 +675,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 15,
   },
-  
-  // Timer cards
   cardContador: {
     borderRadius: 16,
     padding: 18,
@@ -836,8 +769,20 @@ const styles = StyleSheet.create({
   botaoDesabilitado: {
     backgroundColor: '#2D2D44',
   },
-  
-  // Sensor Dashboard Styles
+  mensagemFinalContainer: {
+    backgroundColor: '#10B981',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 14,
+    alignItems: 'center',
+  },
+  mensagemFinalTexto: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '700',
+    textAlign: 'center',
+    lineHeight: 22,
+  },
   cardSensor: {
     marginHorizontal: 16,
     marginTop: 16,
@@ -874,5 +819,5 @@ const styles = StyleSheet.create({
     height: 180,
     borderRadius: 12,
     marginTop: 10,
-  }
+  },
 });
