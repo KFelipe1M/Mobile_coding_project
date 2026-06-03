@@ -78,12 +78,12 @@ Screenshots:
 
 Grupo:
 
-Matheus Henrique Macêdo Costa - 01807287
-Kauã Filipe Moreno Marques - 01791750
-Lucas Teobaldo Cruz - 01802436
-Matheus Kastberg - 01816352
-Samuel Nikolas de Almeida Medeiros - 01786531
-Vagner Henrique - 01813729
-Victor Ribeiro Barbosa de Menezes - 01791754
+# Matheus Henrique Macêdo Costa - 01807287
+# Kauã Filipe Moreno Marques - 01791750
+# Lucas Teobaldo Cruz - 01802436
+# Matheus Kastberg - 01816352
+# Samuel Nikolas de Almeida Medeiros - 01786531
+# Vagner Henrique - 01813729
+# Victor Ribeiro Barbosa de Menezes - 01791754
 
 Projetado e desenvolvido para fins acadêmicos — Uninassau.
