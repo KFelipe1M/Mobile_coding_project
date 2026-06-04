@@ -493,7 +493,7 @@ function SobreNosScreen({ navigation }) {
       <View style={[styles.cardSensor, { backgroundColor: colors.card, borderColor: colors.border, marginHorizontal: 0, padding: 18 }]}>
         <Text style={[styles.tituloCardSensor, { color: colors.text, fontSize: 18 }]}>FitLife</Text>
         <Text style={[styles.legendaSensor, { color: colors.subText, fontSize: 14, lineHeight: 22 }]}>
-          (((Adicionar texto sobre o app e o grupo aqui)))
+          Projeto para a disciplina mobile coding apresentando o app "FitLife".
         </Text>
         <Text style={[styles.legendaSensor, { color: colors.subText, marginTop: 20, fontWeight: '700' }]}>
           Versão: 1.0.0 (Snack Web build)
