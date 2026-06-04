@@ -72,9 +72,9 @@ Nota: Para o funcionamento correto dos sensores de GPS e Câmera, conceda as per
 
 Screenshots:
 
-![alt text](image.png)
+![alt text](screenshots_readme/image.png)
 
-![alt text](image-1.png)
+![alt text](screenshots_readme/image-1.png)
 
 Grupo:
 
