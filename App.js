@@ -493,7 +493,17 @@ function SobreNosScreen({ navigation }) {
       <View style={[styles.cardSensor, { backgroundColor: colors.card, borderColor: colors.border, marginHorizontal: 0, padding: 18 }]}>
         <Text style={[styles.tituloCardSensor, { color: colors.text, fontSize: 18 }]}>FitLife</Text>
         <Text style={[styles.legendaSensor, { color: colors.subText, fontSize: 14, lineHeight: 22 }]}>
-          (((Adicionar texto sobre o app e o grupo aqui)))
+          Projeto para a disciplina mobile coding apresentando o app "FitLife".
+        </Text>
+        <Text style={[styles.legendaSensor, { color: colors.subText, fontSize: 14, lineHeight: 22 }]}>
+          Grupo:'Grupo: \n' +
+        'Kauã Filipe Moreno Marques - 01791750\n' +
+        'Matheus Henrique Macêdo Costa - 01807287\n' +
+        'Lucas Teobaldo Cruz - 01802436\n' +
+        'Matheus Kastberg - 01816352\n' +
+        'Samuel Nikolas de Almeida Medeiros - 01786531\n' +
+        'Vagner Henrique - 01813729\n' +
+        'Victor Ribeiro Barbosa de Menezes - 01791754'}
         </Text>
         <Text style={[styles.legendaSensor, { color: colors.subText, marginTop: 20, fontWeight: '700' }]}>
           Versão: 1.0.0 (Snack Web build)
