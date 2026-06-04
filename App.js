@@ -493,7 +493,9 @@ function SobreNosScreen({ navigation }) {
       <View style={[styles.cardSensor, { backgroundColor: colors.card, borderColor: colors.border, marginHorizontal: 0, padding: 18 }]}>
         <Text style={[styles.tituloCardSensor, { color: colors.text, fontSize: 18 }]}>FitLife</Text>
         <Text style={[styles.legendaSensor, { color: colors.subText, fontSize: 14, lineHeight: 22 }]}>
-          Projeto para a disciplina mobile coding apresentando o app "FitLife".
+        O FitLife é um aplicativo mobile desenvolvido em React Native e Expo focado na saúde, bem-estar e monitoramento físico dos usuários. O projeto traz uma interface moderna projetada para catalogar treinos diários divididos por categorias, cronometrar séries de exercícios de forma inteligente e coletar dados físicos e ambientais em tempo real integrando sensores nativos do dispositivo (Acelerômetro, GPS e Câmera).
+
+Este projeto foi construído como parte dos requisitos práticos da disciplina de Programação - Mobile Coding.
         </Text>
         <Text style={[styles.legendaSensor, { color: colors.subText, marginTop: 20, fontWeight: '700' }]}>
           Versão: 1.0.0 (Snack Web build)
